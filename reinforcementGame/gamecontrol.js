@@ -5,6 +5,7 @@ function resetGame() {
         bestPlayer.score = 0;
     }
     oArray = [];
+    pipesSpawned = 0;
     // pArray = [];
   }
   

@@ -1,5 +1,5 @@
 function mutate(x) {
-    if (random(1) < 0.05) {
+    if (random(1) < 0.1) {
       let offset = randomGaussian() * 0.5;
       let newx = x + offset;
       return newx;
@@ -23,11 +23,10 @@ class Player
 
         if (brain instanceof NeuralNetwork) {
             this.brain = brain.copy();
-            if(random(1) < 0.5)
-                this.brain.mutate(mutate);
+            this.brain.mutate(mutate);  
         } else {
             // Just find the closest obstacle for now.
-            this.brain = new NeuralNetwork(3, 8, 2);
+            this.brain = new NeuralNetwork(6, 8, 2);
         }
 
         this.display = function(){
@@ -43,26 +42,39 @@ class Player
         this.think=function() {
             // First find the closest pipe
             let closest = null;
-            let record = -Infinity;
+            let closest2 = null;
+            let max = -Infinity;
+            let max2 = -Infinity;
             for (let i = 0; i < oArray.length; i++) {
               let diff = oArray[i].yloc;
-              if (diff > 0 && diff > record) {
-                record = diff;
+              if (diff > 0 && diff > max) {
+                max = diff;
+                closest2 = closest;
                 closest = oArray[i];
+              }
+              else if(diff > 0 && diff > max2) {
+                  max2 = diff;
+                  closest2 = oArray[i];
               }
             }
             
-            if (closest != null) {
+            if (closest != null && closest2 != null) {
+            //   console.log(closest2.yloc);
+            //   console.log(closest.yloc);
               // Now create the inputs to the neural network
               let inputs = [];
               // opening location of closest pipe
               inputs[0] = map(closest.xloc, 0, width, 0, 1);
               // distance from player
-            //   inputs[1] = map(closest.yloc, 0, height-50, 0, 1);
+              inputs[1] = map(closest.yloc, 0, height-50, 0, 1);
+              // opening location of 2nd closest pipe
+              inputs[2] = map(closest2.xloc, 0, width, 0, 1);
+              // distance from player
+              inputs[3] = map(closest2.yloc, 0, height-50, 0, 1);
               // player x vel
-              inputs[1] = map(this.vel, -this.maxvel, this.maxvel, 0, 1);
+              inputs[4] = map(this.vel, -this.maxvel, this.maxvel, 0, 1);
               // Player location :\
-              inputs[2] = map(this.xloc,0,width,0,1);
+              inputs[5] = map(this.xloc,0,width,0,1);
               // Get the outputs from the network
               let action = this.brain.predict(inputs);
               let indexOfMaxValue = action.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
@@ -82,7 +94,7 @@ class Player
         }
 
         this.copy = function() {
-            return new Player(this.brain);
+            return new Player(this.bins, this.brain);
         }
         
         function round20(x)

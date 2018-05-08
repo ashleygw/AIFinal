@@ -58,13 +58,14 @@ function draw() {
         tickSpan.html(tick);
         batSpan.html(highScore);
         genSpan.html(generations);
-        if(tick % (300 - int(pipesSpawned/5)) == 0){
+        if(tick % (300 - pipesSpawned) == 0){
+            // console.log((300 - int(pipesSpawned)));
             let w = random(200,400);
             let xloc = random(w/2,width - w/2);
             let inv = 30;
             let o = new Obstacle(w,xloc,inv,xsplit,ysplit);
             oArray.push(o);
-            pipesSpawned++;
+            pipesSpawned+=1;
         }
         for (let i = oArray.length - 1; i >= 0; i--) {
             oArray[i].update(tick);
