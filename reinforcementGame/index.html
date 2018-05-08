@@ -4,8 +4,12 @@
 
   <!-- PLEASE NO CHANGES BELOW THIS LINE (UNTIL I SAY SO) -->
   <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="libraries/p5.dom.js"></script>
   <script language="javascript" type="text/javascript" src="Population.js"></script>
   <script language="javascript" type="text/javascript" src="dna.js"></script>
+  <script language="javascript" type="text/javascript" src="gamecontrol.js"></script>
+  <script language="javascript" type="text/javascript" src="matrix.js"></script>
+  <script language="javascript" type="text/javascript" src="nn.js"></script>
   <script language="javascript" type="text/javascript" src="obstacle.js"></script>
   <script language="javascript" type="text/javascript" src="player.js"></script>
   <script language="javascript" type="text/javascript" src="reinforcementGame.js"></script>
@@ -17,5 +21,16 @@
 </head>
 
 <body>
+<div id="canvascontainer"></div>
+  <p>
+    <!-- speed: <input id="speedSlider" type="range" min="1" max="10" value="1"> <span id="speed">1</span> -->
+    <br/> tick: <span id="tick">0</span>
+    <br/> best all time: <span id="bat">0</span>
+    <br/> generation count: <span id="gen">0</span>
+  </p>
+  <p>
+    <button id="best">run best so far</button>
+  </p>
+
 </body>
 </html>
