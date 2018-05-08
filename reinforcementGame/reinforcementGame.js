@@ -15,6 +15,10 @@ let generations = 0;
 let pipesSpawned = 0;
 let runBest = false;
 let runBestButton;
+let averageFitness = 0;
+let showGame = false;
+let fitGraph = [];
+let showGraph = true;
 
 function setup() {
     createCanvas(700,400);
@@ -24,6 +28,7 @@ function setup() {
     // oArray.push(obstacle);
     strokeWeight(5);
     stroke('green');
+    fitSpan = select('#fit');
     tickSpan = select('#tick');
     batSpan = select('#bat');
     genSpan = select('#gen');
@@ -49,8 +54,39 @@ function toggleState() {
       runBestButton.html('run best');
     }
 }
-
+function graph()
+{
+    xbin = width / (fitGraph.length+1);
+    ybin = height/ Math.max.apply(Math,fitGraph);
+    p1x = 0;
+    p1y = 0;
+    p2x = 0;
+    p2y = 0;
+    for(let i = 0; i < fitGraph.length - 1;i++)
+    {
+        p1x = xbin * i;
+        p1y = height - fitGraph[i] * ybin;
+        p2x = xbin * i + xbin;
+        p2y = height - fitGraph[i+1] * ybin;
+        line(p1x,p1y,p2x,p2y);
+    }
+}
+function calcAveFitness(){
+    sum = 0;
+    for (let i = pArray.length - 1; i >= 0; i--)
+        sum += pArray[i].score;
+    averageFitness = sum / totalPopulation;
+    return averageFitness;
+}
+function keyPressed() {
+    console.log(key);
+    if(key == "S")
+      showGame = !showGame;
+    if(key == "G")
+        showGraph = !showGraph;
+}
 function draw() {
+    // console.log(fitGraph);
     for (let n = 0; n < cycles; n++) {
         // console.log(frameRate());
         tick += 1;
@@ -58,6 +94,10 @@ function draw() {
         tickSpan.html(tick);
         batSpan.html(highScore);
         genSpan.html(generations);
+        fitSpan.html(averageFitness);
+        if(showGraph)
+            graph();
+        
         if(tick % (300 - pipesSpawned) == 0){
             // console.log((300 - int(pipesSpawned)));
             let w = random(200,400);
@@ -69,13 +109,15 @@ function draw() {
         }
         for (let i = oArray.length - 1; i >= 0; i--) {
             oArray[i].update(tick);
-            oArray[i].display();
+            if(showGame)
+                oArray[i].display();
             if (oArray[i].yloc > height - 10) {
                 oArray.splice(i, 1);
             }
         }
         if (runBest) {
-            bestPlayer.display();
+            if(showGame)
+                bestPlayer.display();
             bestPlayer.think();
             bestPlayer.update();
             if (bestPlayer.collision()) {
@@ -84,9 +126,10 @@ function draw() {
         }
         else
         {
-            for(let i = 0; i < paArray.length; i++){
-                paArray[i].display();
-            }
+            if(showGame)
+                for(let i = 0; i < paArray.length; i++){
+                    paArray[i].display();
+                }
             
             for (let i = paArray.length - 1; i >= 0; i--) {
                 let player = paArray[i];
@@ -102,6 +145,8 @@ function draw() {
             }
             
             if (paArray.length == 0) {
+                
+                fitGraph.push(calcAveFitness());
                 nextGeneration();
                 generations++;
             }

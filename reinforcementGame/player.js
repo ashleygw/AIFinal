@@ -14,7 +14,7 @@ class Player
         this.xloc = (width/2);
         this.yloc = height - 50;
         this.vel = 0;
-        this.maxvel = 5;
+        this.maxvel = 10;
         this.size = 40;
         this.bins = binsize;
         this.alive = true;
@@ -28,7 +28,10 @@ class Player
             // Just find the closest obstacle for now.
             this.brain = new NeuralNetwork(6, 8, 2);
         }
-
+        this.showBrain = function()
+        {
+            
+        }
         this.display = function(){
             stroke('green');
             rect(round20(this.xloc),this.yloc,this.size,this.size);
@@ -81,10 +84,10 @@ class Player
               // Left right/no input
               switch(indexOfMaxValue){
                     case 0:
-                        this.input(0.05);
+                        this.input(0.1);
                         break;
                     case 1:
-                        this.input(-0.05);
+                        this.input(-0.1);
                         break;
                     // case 2:
                     //     this.input(0);
