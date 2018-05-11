@@ -19,6 +19,7 @@ let averageFitness = 0;
 let showGame = false;
 let fitGraph = [];
 let showGraph = true;
+let bestBrain = null;
 
 function setup() {
     createCanvas(700,400);
@@ -41,7 +42,20 @@ function setup() {
     }
     
 }
-
+function showBrain(){
+    if (bestBrain){
+        let input_nodes = bestBrain[input_nodes];
+        let hidden_nodes = bestBrain[hidden_nodes];
+        let output_nodes = bestBrain[output_nodes];
+        let weights_ih = bestBrain[weights_ih];
+        let weights_ho = bestBrain[weights_ho];
+        let bias_h = bestBrain[bias_h];
+        let bias_o = bestBrain[bias_o];
+        let input_loc = 4*height / 5;
+        let hidden_loc = 3 * height /5;
+        let out_loc = height/5;
+    }
+}
 function toggleState() {
     runBest = !runBest;
     // Show the best player
@@ -164,6 +178,8 @@ function draw() {
             if (tempHighScore > highScore) {
                 highScore = tempHighScore;
                 bestPlayer = tempbestPlayer;
+                bestBrain = bestPlayer.brain.serialize();
+                console.log(bestPlayer.brain.serialize());
             }else{
                 tempHighScore = bestPlayer.score;
                 if (tempHighScore > highScore) {
