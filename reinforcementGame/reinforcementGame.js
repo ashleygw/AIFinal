@@ -8,7 +8,7 @@ let bat = 0;
 let xsplit = 20;
 let ysplit = 20;
 let bestPlayer;
-let totalPopulation = 200;
+let totalPopulation = 400;
 let highScore = 0;
 let cycles = 10;
 let generations = 0;
@@ -44,16 +44,62 @@ function setup() {
 }
 function showBrain(){
     if (bestBrain){
-        let input_nodes = bestBrain[input_nodes];
-        let hidden_nodes = bestBrain[hidden_nodes];
-        let output_nodes = bestBrain[output_nodes];
-        let weights_ih = bestBrain[weights_ih];
-        let weights_ho = bestBrain[weights_ho];
-        let bias_h = bestBrain[bias_h];
-        let bias_o = bestBrain[bias_o];
+        let input_nodes = bestBrain["input_nodes"];
+        let hidden_nodes = bestBrain["hidden_nodes"];
+        let output_nodes = bestBrain["output_nodes"];
+        let weights_ih = bestBrain["weights_ih"];
+        let weights_ho = bestBrain["weights_ho"];
+        let bias_h = bestBrain["bias_h"];
+        let bias_o = bestBrain["bias_o"];
         let input_loc = 4*height / 5;
-        let hidden_loc = 3 * height /5;
+        let hidden_loc = 2.5 * height /5;
         let out_loc = height/5;
+        // Get min and max of everything for scaling.
+        let values_ih = weights_ih["data"].map(function(elt) { return elt[1]; });
+        let values_ho = weights_ho["data"].map(function(elt) { return elt[1]; });
+        // let values_h = bias_h["data"].map(function(elt) { return elt[1]; });
+        // let values_o = bias_o["data"].map(function(elt) { return elt[1]; });
+        let max_ih = Math.max.apply(null, values_ih);
+        let min_ih = Math.min.apply(null, values_ih);
+        let max_ho = Math.max.apply(null, values_ho);
+        let min_ho = Math.min.apply(null, values_ho);
+        // let max_h = Math.max.apply(bias_h["data"]);
+        // let min_h = Math.min.apply(bias_h["data"]);
+        // let max_o = Math.max.apply(null, values_o);
+        // let min_o = Math.min.apply(null, values_o);
+        // console.log(max_o);
+        // console.log(min_o);
+        // console.log(max_h);
+        // console.log(min_h);
+        // console.log(max_ih);
+        // console.log(min_ih);
+
+        // Draw the input layer
+        for(let i = 0; i < weights_ih["data"][0].length;++i)
+        {
+            ellipse(width / (weights_ih["data"][0].length + 1) * (i+1), input_loc, 50,50);
+        }
+        // Draw the hidden layer
+        for(let i = 0; i < weights_ih["data"].length;++i)
+        {
+            ellipse(width / (weights_ih["data"].length + 1) * (i+1), hidden_loc, 50,50);
+        }
+        // Draw the output layer
+        for(let i = 0; i < weights_ho["data"].length;++i)
+        {
+            ellipse(width / (weights_ho["data"].length + 1) * (i+1), out_loc, 50,50);
+        }
+        // Draw the weights from the input to hidden layer
+        let c = color(0);
+        for(let i = 0; i < weights_ih["data"].length;++i)
+        {
+            for(let j = 0; j < weights_ih["data"][i].length;++j)
+            {
+                c = color(map(weights_ih["data"][i][j], min_ih, max_ih,0,255));
+                stroke(c);
+                line(width / (weights_ih["data"][0].length + 1) * (j+1), input_loc, width / (weights_ih["data"].length + 1) * (i+1), hidden_loc);
+            }
+        }
     }
 }
 function toggleState() {
@@ -82,6 +128,7 @@ function graph()
         p1y = height - fitGraph[i] * ybin;
         p2x = xbin * i + xbin;
         p2y = height - fitGraph[i+1] * ybin;
+        stroke('green');
         line(p1x,p1y,p2x,p2y);
     }
 }
@@ -101,10 +148,12 @@ function keyPressed() {
 }
 function draw() {
     // console.log(fitGraph);
+    
     for (let n = 0; n < cycles; n++) {
         // console.log(frameRate());
         tick += 1;
         background(51);
+        showBrain();
         tickSpan.html(tick);
         batSpan.html(highScore);
         genSpan.html(generations);
@@ -178,8 +227,8 @@ function draw() {
             if (tempHighScore > highScore) {
                 highScore = tempHighScore;
                 bestPlayer = tempbestPlayer;
-                bestBrain = bestPlayer.brain.serialize();
-                console.log(bestPlayer.brain.serialize());
+                bestBrain = JSON.parse(bestPlayer.brain.serialize());
+                console.log(bestBrain);
             }else{
                 tempHighScore = bestPlayer.score;
                 if (tempHighScore > highScore) {
