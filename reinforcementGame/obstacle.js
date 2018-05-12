@@ -7,7 +7,7 @@ function Obstacle(w,xloc,invelocity, wsplit, hsplit){
     this.colx = this.xloc - this.width/2;
     this.colx2 = this.xloc + this.width/2;
     this.coly = this.yloc + this.hsplit;
-    this.name = random(10);
+    // this.name = random(10);
 
     this.display = function(){
         stroke('red');
